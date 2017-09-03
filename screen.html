@@ -5,26 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        .container {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>AirConsole Example / screen</h1>
+    <div class="container">
+        <h2>Connected players</h2>
+        <div id="connected-players"></div>
+
+        <div id="state">MENU</div>
+    </div>
     
     <script type="text/javascript" src="https://www.airconsole.com/api/airconsole-1.7.0.js"></script>
     <script type="text/javascript">
         var air_console = new AirConsole();
+        air_console.onMessage = onMessageReceived;
 
-        log('waiting for message');
-    
-        // Listen for messages from other devices
-        air_console.onMessage = function(from, data) {
-    
-          // We receive a message -> Send message back to the device
-          air_console.message(from, "Full of pixels!");
-    
-          // Show message on device screen
-          log(data);
-        };
+        var joined = [];
+
+
+        function onMessageReceived(fromDeviceId, data) {
+            switch (data) {
+                case 'join':
+                    onDeviceJoined(fromDeviceId);
+                    break;
+            }
+
+            log('message: ' + JSON.stringify(data));
+        }
+
+        function onDeviceJoined(deviceId) {
+            if (joined.indexOf(deviceId) !== -1)
+                return;
+
+            joined.push(deviceId);
+
+            var img = document.createElement('img');
+            img.id = 'avatar-' + deviceId;
+            img.className = 'avatar';
+            img.src = air_console.getProfilePicture(deviceId);
+            document.getElementById('connected-players').appendChild(img);
+
+            if (joined.length == air_console.getControllerDeviceIds().length)
+                startGame();
+        }
+
+        function startGame() {
+            air_console.broadcast('start-game');
+            document.getElementById('state').innerHTML = '!!! GAME !!!';
+        }
+
+        function onDeviceDisconnected(deviceId) {
+            log('onDeviceDisconnected ' + deviceId);
+            if (!deviceId)
+                return;
+
+            var img = document.getElementById('avatar-' + deviceId);
+            if (!img)
+                return;
+
+            img.parentNode.removeChild(img);
+        }
 
         function log(data) {
             var info = document.createElement('div');

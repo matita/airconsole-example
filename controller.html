@@ -5,30 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        .container {
+            text-align: center;
+        }
+
+        button {
+            font-size: 2em;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>AirConsole Example / controller<h1>
+    <div class="container">
+        <h1>Controller</h1>
+        <img id="profile" src="">
+
+        <div id="menu-controller">
+            <h2>Menu</h2>
+            <button id="join-btn">Join</button>
+        </div>
+
+        <div id="game-controller" style="display:none">
+            <h2>Game</h2>
+            <button id="kick-btn">Kick</button>
+        </div>
+    </div>
+
+    
     
 
     <script type="text/javascript" src="https://www.airconsole.com/api/airconsole-1.7.0.js"></script>
     <script type="text/javascript">
         var air_console = new AirConsole();
-    
-        log('waiting for 3 seconds');
-        setTimeout(function() {
-            // Send a message to the screen
-            log('trying to send');
+        air_console.onReady = onReady;
+        air_console.onConnect = onDeviceConnected;
+        air_console.onMessage = onMessageReceived;
+
+        var ownDeviceId;
+        document.getElementById('join-btn').onclick = onJoinClick;
+        document.getElementById('kick-btn').onclick = onKickClick;
+
+
+        function onReady() {
+            log('device ready');
+            ownDeviceId = air_console.getDeviceId();
+            log('ownDeviceId: ' + ownDeviceId);
+            var profilePic = air_console.getProfilePicture();
+            log('profilePic: ' + profilePic);
+            document.getElementById('profile').src = profilePic;
+        }
+
+        function onDeviceConnected(deviceId) {
+            if (deviceId === AirConsole.SCREEN)
+                onConnectedToScreen();
+        }
+
+        function onConnectedToScreen() {
+            log('connected to screen');
             air_console.message(AirConsole.SCREEN, "How are you?");
-            log('sent');
-        
-            // Listen for messages
-            air_console.onMessage = function(from, data) {
-        
-            // Show message on device screen
-            log(data);
-            };
-        }, 3000);
+        }
+
+        function onMessageReceived(from, data) {
+            switch(data) {
+                case 'start-game':
+                    document.getElementById('menu-controller').style.display = 'none';
+                    document.getElementById('game-controller').style.display = 'block';
+                    break;
+
+                case 'go-to-menu':
+                    document.getElementById('menu-controller').style.display = 'block';
+                    document.getElementById('game-controller').style.display = 'none';
+                    break;
+            }
+
+            log('message: ' + JSON.stringify(data));
+        }
+
+        function onJoinClick() {
+            air_console.message(AirConsole.SCREEN, 'join');
+        }
+
+        function onKickClick() {
+            air_console.message(AirConsole.SCREEN, 'kick');
+        }
         
 
         function log(text) {
