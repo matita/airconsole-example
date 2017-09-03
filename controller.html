@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>AirConsole Example / controller<h1>
+    
+
+    <script type="text/javascript" src="https://www.airconsole.com/api/airconsole-1.7.0.js"></script>
+    <script type="text/javascript">
+        var air_console = new AirConsole();
+    
+        // Send a message to the screen
+        log('trying to send');
+        air_console.message(AirConsole.SCREEN, "How are you?");
+        log('sent');
+    
+        // Listen for messages
+        air_console.onMessage = function(from, data) {
+    
+          // Show message on device screen
+          log(data);
+        };
+
+        function log(text) {
+            var d = document.createElement('div');
+            d.innerHTML = text;
+            document.body.appendChild(d);
+        }
+    </script>
+</body>
+</html>

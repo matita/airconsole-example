@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>AirConsole Example / screen</h1>
+    
+    <script type="text/javascript" src="https://www.airconsole.com/api/airconsole-1.7.0.js"></script>
+    <script type="text/javascript">
+        var air_console = new AirConsole();
+
+        log('waiting for message');
+    
+        // Listen for messages from other devices
+        air_console.onMessage = function(from, data) {
+    
+          // We receive a message -> Send message back to the device
+          air_console.message(from, "Full of pixels!");
+    
+          // Show message on device screen
+          log(data);
+        };
+
+        function log(data) {
+            var info = document.createElement('div');
+            info.innerHTML = data;
+            document.body.appendChild(info);
+        }
+    </script>
+</body>
+</html>
