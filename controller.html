@@ -15,17 +15,21 @@
     <script type="text/javascript">
         var air_console = new AirConsole();
     
-        // Send a message to the screen
-        log('trying to send');
-        air_console.message(AirConsole.SCREEN, "How are you?");
-        log('sent');
-    
-        // Listen for messages
-        air_console.onMessage = function(from, data) {
-    
-          // Show message on device screen
-          log(data);
-        };
+        log('waiting for 3 seconds');
+        setTimeout(function() {
+            // Send a message to the screen
+            log('trying to send');
+            air_console.message(AirConsole.SCREEN, "How are you?");
+            log('sent');
+        
+            // Listen for messages
+            air_console.onMessage = function(from, data) {
+        
+            // Show message on device screen
+            log(data);
+            };
+        }, 3000);
+        
 
         function log(text) {
             var d = document.createElement('div');
